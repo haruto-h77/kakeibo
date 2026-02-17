@@ -1,0 +1,17 @@
+# mac
+.DS_Store
+
+# node
+frontend/node_modules
+frontend/build
+
+# gradle
+backend/.gradle
+backend/build
+
+# logs
+*.log
+
+# env
+.env
+
