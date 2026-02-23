@@ -1,0 +1,216 @@
+openapi: 3.0.3
+info:
+  title: Kakeibo API
+  description: 家計簿アプリ用API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+
+tags:
+  - name: Categories
+  - name: Transactions
+  - name: Summary
+  - name: Users
+
+paths:
+
+  /categories:
+    get:
+      tags: [Categories]
+      summary: カテゴリ一覧取得
+      responses:
+        "200":
+          description: カテゴリ一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+    post:
+      tags: [Categories]
+      summary: カテゴリ作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryRequest"
+      responses:
+        "201":
+          description: 作成成功
+
+  /categories/{id}:
+    delete:
+      tags: [Categories]
+      summary: カテゴリ削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 削除成功
+
+  /transactions:
+    post:
+      tags: [Transactions]
+      summary: 取引登録
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequest"
+      responses:
+        "201":
+          description: 登録成功
+
+    get:
+      tags: [Transactions]
+      summary: 月別取引取得
+      parameters:
+        - in: query
+          name: month
+          required: true
+          schema:
+            type: string
+            example: 2026-02
+      responses:
+        "200":
+          description: 取引一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /transactions/{id}:
+    delete:
+      tags: [Transactions]
+      summary: 取引削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 削除成功
+
+  /summary/month:
+    get:
+      tags: [Summary]
+      summary: 月別合計取得
+      parameters:
+        - in: query
+          name: month
+          required: true
+          schema:
+            type: string
+            example: 2026-02
+      responses:
+        "200":
+          description: 月別サマリー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlySummary"
+
+  /summary/category:
+    get:
+      tags: [Summary]
+      summary: カテゴリ別集計
+      parameters:
+        - in: query
+          name: month
+          required: true
+          schema:
+            type: string
+            example: 2026-02
+      responses:
+        "200":
+          description: カテゴリ集計
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategorySummary"
+
+components:
+  schemas:
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    CategoryRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        amount:
+          type: integer
+        type:
+          type: string
+          enum: [INCOME, EXPENSE]
+        category:
+          type: string
+        date:
+          type: string
+          format: date
+        memo:
+          type: string
+
+    TransactionRequest:
+      type: object
+      required: [amount, type, categoryId, date]
+      properties:
+        amount:
+          type: integer
+        type:
+          type: string
+          enum: [INCOME, EXPENSE]
+        categoryId:
+          type: integer
+        date:
+          type: string
+          format: date
+        memo:
+          type: string
+
+    MonthlySummary:
+      type: object
+      properties:
+        income:
+          type: integer
+        expense:
+          type: integer
+        balance:
+          type: integer
+
+    CategorySummary:
+      type: object
+      properties:
+        category:
+          type: string
+        amount:
+          type: integer
