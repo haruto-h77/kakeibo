@@ -1,7 +1,7 @@
 package com.example.kakeibo.controller;
 
 import com.example.kakeibo.repository.CategoryRepository;
-import com.example.kakeibo.entoty.Category;
+import com.example.kakeibo.entity.Category;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("/categories")
 public class CategoryController {
     
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     public CategoryController(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
